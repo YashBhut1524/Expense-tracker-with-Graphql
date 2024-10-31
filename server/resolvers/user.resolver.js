@@ -47,7 +47,7 @@ const userResolver = {
                 throw new Error (error.message || "Internal server Error!!") 
             }
         },
-        logout: async(_, _, context) => {
+        logout: async(_, __, context) => {
             try {
                 await context.logout()
                 req.session.destroy((error) => {
