@@ -20,6 +20,7 @@ import resolvers from "./resolvers/index.js"
 import { connectDB } from "./db/connectDB.js"
 import { configurePassport } from "./passport/passport.config.js"
 
+
 dotenv.config()
 configurePassport()
 
