@@ -4,36 +4,41 @@ import bcrypt from "bcryptjs"
 
 const userResolver = {
     Mutation: {
-        signUp: async (_, {input}, context) => {
-            try {
-                const {username, name, password, gender} = input
-                if(!username || !name || !password || !gender) throw new Error("All fields are required!!");
-                const existingUser = User.findOne({username})
-                if(existingUser) throw new Error("User already Exists!!")
-                
-                const salt = await bcrypt.genSalt(20)
-                const hashPassword =  await bcrypt.hash(password, salt)
-                
-                //https://avatar-placeholder.iran.liara.run/
-                const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`
-                const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`
+        signUp: async (_, { input }, context) => {
+			try {
+				const { username, name, password, gender } = input;
 
-                const newUser = User({
-                    username,
-                    name,
-                    password: hashPassword,
-                    gender,
-                    profilePicture: gender === "male" ? boyProfilePic : girlProfilePic
-                })
+				if (!username || !name || !password || !gender) {
+					throw new Error("All fields are required");
+				}
+				const existingUser = await User.findOne({ username });
+				if (existingUser) {
+					throw new Error("User already exists");
+				}
 
-                await newUser.save();
-                await context.login(newUser)
-                return newUser
-            } catch (error) {
-                console.error("Error in signUp: ", error);
-                throw new Error (error.message || "Internal server Error!!") 
-            }
-        },
+				const salt = await bcrypt.genSalt(10);
+				const hashedPassword = await bcrypt.hash(password, salt);
+
+				// https://avatar-placeholder.iran.liara.run/
+				const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`;
+				const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`;
+
+				const newUser = new User({
+					username,
+					name,
+					password: hashedPassword,
+					gender,
+					profilePicture: gender === "male" ? boyProfilePic : girlProfilePic,
+				});
+
+				await newUser.save();
+				await context.login(newUser);
+				return newUser;
+			} catch (err) {
+				console.error("Error in signUp: ", err);
+				throw new Error(err.message || "Internal server error");
+			}
+		},
 
         login: async (_, {input}, context) => {
             try {
@@ -47,13 +52,14 @@ const userResolver = {
                 throw new Error (error.message || "Internal server Error!!") 
             }
         },
+        
         logout: async(_, __, context) => {
             try {
                 await context.logout()
-                req.session.destroy((error) => {
+                context.req.session.destroy((error) => {
                     if(error) throw error
                 })
-                res.clearCookie("connect.sid")
+                context.res.clearCookie("connect.sid")
 
                 return {message: "Logged Out Successfully"}
             } catch (error) {
