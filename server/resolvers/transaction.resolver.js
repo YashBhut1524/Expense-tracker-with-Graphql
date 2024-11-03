@@ -8,13 +8,14 @@ const transactionResolver = {
                     ...input, //input is from CreateTransactionInput in transactionTypeDef
                     userId: context.getUser()._id 
                 })
-                await new newTransaction.save()
+                await newTransaction.save()
                 return newTransaction
             } catch (error) {
                 console.error("Error creating Transaction: ", error);
                 throw new Error("Error creating Transaction")
             }
         },
+
         updateTransaction: async (_, {input}) => {
             try {
                 const updatedTransaction = Transaction.findByIdAndUpdate(input.transactionId, input, {new: true})
@@ -24,6 +25,7 @@ const transactionResolver = {
                 throw new Error("Error updating Transaction")
             }
         },
+        
         deleteTransaction: async (_, {transactionId}) => {
             try {
                 const deleteTransaction = Transaction.findByIdAndDelete(transactionId)

@@ -23,7 +23,6 @@
         }
 
         input CreateTransactionInput {
-            transactionId: ID!
             description: String!
             paymentType: String!
             category: String!
