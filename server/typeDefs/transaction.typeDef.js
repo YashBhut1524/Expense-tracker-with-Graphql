@@ -13,7 +13,7 @@
         
         type Query {
             transactions: [Transaction]
-            transaction(transaction: ID!): Transaction
+            transaction(transactionId: ID!): Transaction
         }
 
         type Mutation {

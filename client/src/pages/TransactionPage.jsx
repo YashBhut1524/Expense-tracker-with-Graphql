@@ -1,13 +1,22 @@
-import { useState } from "react";
+import { useQuery } from "@apollo/client";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { GET_TRANSACTION } from "../GraphQl/queries/transaction.query";
 
 const TransactionPage = () => {
+
+	const {id} = useParams()
+	// console.log(id);
+	const {loading, data} = useQuery(GET_TRANSACTION, {variables: {id: id}})
+	// console.log("Transaction Data: ", data);
+	
 	const [formData, setFormData] = useState({
-		description: "",
-		paymentType: "",
-		category: "",
-		amount: "",
-		location: "",
-		date: "",
+		description: data?.transaction?.description || "",
+		paymentType: data?.transaction?.paymentType || "",
+		category: data?.transaction?.category || "",
+		amount: data?.transaction?.amount || "",
+		location: data?.transaction?.location || "",
+		date: data?.transaction?.date || "",
 	});
 
 	const handleSubmit = async (e) => {
@@ -22,8 +31,21 @@ const TransactionPage = () => {
 		}));
 	};
 
-	// if (loading) return <TransactionFormSkeleton />;
+	useEffect(() => {
+		if(data) {
+			setFormData({
+				description: data?.transaction?.description,
+				paymentType: data?.transaction?.paymentType,
+				category: data?.transaction?.category,
+				amount: data?.transaction?.amount,
+				location: data?.transaction?.location,
+				date: new Date(+data.transaction.date).toISOString().substr(0, 10),
+			})
+		}
+	}, [data])
 
+	// if (loading) return <TransactionFormSkeleton />;
+	
 	return (
 		<div className='h-screen max-w-4xl mx-auto flex flex-col items-center'>
 			<p className='md:text-4xl text-2xl lg:text-4xl font-bold text-center relative z-50 mb-4 mr-4 bg-gradient-to-r from-pink-600 via-indigo-500 to-pink-400 inline-block text-transparent bg-clip-text'>

@@ -5,7 +5,7 @@ import toast from "react-hot-toast"
 const TransactionForm = () => {
 
 	const [createTransaction, {loading}] = useMutation(CREATE_TRANSACTION, {
-		refetchQueries: [""]
+		refetchQueries: ["getTransactions"]
 	})
 
 	const handleSubmit = async (e) => {
@@ -146,7 +146,7 @@ const TransactionForm = () => {
 						id='location'
 						name='location'
 						type='text'
-						placeholder='New York'
+						placeholder='Location'
 					/>
 				</div>
 
