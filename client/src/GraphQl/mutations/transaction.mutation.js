@@ -16,8 +16,8 @@ export const CREATE_TRANSACTION = gql`
 
 export const UPDATE_TRANSACTION = gql `
     mutation UpdateTransaction($input: UpdateTransactionInput!) {
-        createTransaction(input: $input) {
-            transactionId
+        updateTransaction(input: $input) {
+            _id
             description
             paymentType
             category

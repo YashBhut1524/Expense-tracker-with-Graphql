@@ -161,6 +161,7 @@ const TransactionForm = () => {
 						id='date'
 						className='appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-[11px] px-4 mb-3 leading-tight focus:outline-none focus:bg-white'
 						placeholder='Select date'
+						max={new Date().toISOString().split("T")[0]} // Set max to today's date
 					/>
 				</div>
 			</div>

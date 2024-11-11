@@ -18,14 +18,14 @@ const transactionResolver = {
 
         updateTransaction: async (_, {input}) => {
             try {
-                const updatedTransaction = Transaction.findByIdAndUpdate(input.transactionId, input, {new: true})
+                const updatedTransaction = await Transaction.findByIdAndUpdate(input.transactionId, input, {new: true})
                 return updatedTransaction
             } catch (error) {
                 console.error("Error updating Transaction: ", error);
                 throw new Error("Error updating Transaction")
             }
         },
-        
+
         deleteTransaction: async (_, {transactionId}) => {
             try {
                 const deleteTransaction = Transaction.findByIdAndDelete(transactionId)

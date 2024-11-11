@@ -44,7 +44,7 @@ const Card = ({ transaction }) => {
 		<div className={`rounded-md p-4 bg-gradient-to-br ${cardClass}`}>
 			<div className='flex flex-col gap-3'>
 				<div className='flex flex-row items-center justify-between'>
-					<h2 className='text-lg font-bold text-white'>{paymentType}</h2>
+					<h2 className='text-lg font-bold text-white'>{description}</h2>
 					<div className='flex items-center gap-2'>
 						{!loading && <FaTrash className={"cursor-pointer"} onClick={handleDelete} />}
 						{loading && <div className='w-6 h-6 border-t-2 border-b-2  rounded-full animate-spin'></div>}
