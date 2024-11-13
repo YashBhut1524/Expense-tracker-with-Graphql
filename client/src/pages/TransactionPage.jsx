@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { GET_TRANSACTION } from "../GraphQl/queries/transaction.query";
 import { UPDATE_TRANSACTION } from "../GraphQl/mutations/transaction.mutation";
 import toast from "react-hot-toast"
@@ -8,13 +8,21 @@ import TransactionFormSkeleton from "../components/TransactionFormSkeleton"
 
 const TransactionPage = () => {
 
+	const navigate = useNavigate();
 	const {id} = useParams()
 	// console.log(id);
 	const {loading, data} = useQuery(GET_TRANSACTION, {variables: {id: id}})
 	// console.log("Transaction Data: ", data);
 	
-	const [updateTransaction, {loading: loadingUpdate}] = useMutation(UPDATE_TRANSACTION)
+	const [updateTransaction, {loading: loadingUpdate}] = useMutation(UPDATE_TRANSACTION, {
+		refetchQueries: [ "getTransactionStatistics"]
+	})
 
+	useEffect(() => {
+		// Scroll to top when component mounts
+		window.scrollTo(0, 0);
+	}, []);
+	
 	const [formData, setFormData] = useState({
 		description: data?.transaction?.description || "",
 		paymentType: data?.transaction?.paymentType || "",
@@ -23,7 +31,6 @@ const TransactionPage = () => {
 		location: data?.transaction?.location || "",
 		date: data?.transaction?.date || "",
 	});
-
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		console.log("formData", formData);
@@ -42,6 +49,7 @@ const TransactionPage = () => {
 				},
 			});
 			toast.success("Transaction updated successfully");
+			navigate('/')
 		} catch (error) {
 			console.log(error);
 			toast.error(error.message);

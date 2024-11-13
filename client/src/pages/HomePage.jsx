@@ -5,37 +5,96 @@ import toast from "react-hot-toast";
 
 import Cards from "../components/Cards";
 import TransactionForm from "../components/TransactionForm.jsx";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { LOGOUT } from "../GraphQl/mutations/user.mutation.js";
+import { GET_TRANSACTIONS_STATISTICS } from "../GraphQl/queries/transaction.query.js";
+import { useEffect, useState } from "react";
 
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const HomePage = () => {
-	const chartData = {
-		labels: ["Saving", "Expense", "Investment"],
-		datasets: [
-			{
-				label: "%",
-				data: [6300, 8545, 5553],
-				backgroundColor: ["rgba(75, 192, 192)", "rgba(255, 99, 132)", "rgba(54, 162, 235)"],
-				borderColor: ["rgba(75, 192, 192)", "rgba(255, 99, 132)", "rgba(54, 162, 235, 1)"],
-				borderWidth: 0,
-                borderRadius: 0,
-				spacing: 0,
-				cutout: 0,
-			},
-		],
-	};
 
-	const [logout, {loading}] = useMutation(LOGOUT, {
+	// //HardCoded Data for Chart
+	// const chartData = {
+	// 	labels: ["Saving", "Expense", "Investment"],
+	// 	datasets: [
+	// 		{
+	// 			label: "%",
+	// 			data: [6300, 8545, 5553],
+	// 			backgroundColor: ["rgba(75, 192, 192)", "rgba(255, 99, 132)", "rgba(54, 162, 235)"],
+	// 			borderColor: ["rgba(75, 192, 192)", "rgba(255, 99, 132)", "rgba(54, 162, 235, 1)"],
+	// 			borderWidth: 0,
+    //             borderRadius: 0,
+	// 			spacing: 0,
+	// 			cutout: 0,
+	// 		},
+	// 	],
+	// };
+
+	const [logout, {loading, client}] = useMutation(LOGOUT, {
 		refetchQueries: ["GetAuthenticatedUser"]
 	})
+
+	const {data} = useQuery(GET_TRANSACTIONS_STATISTICS)
+	console.log("category Statistics: ", data);
+
+	const [chartData, setChartData] = useState({
+		labels: [],
+		datasets: [
+			{
+				label: "₹",
+				data: [],
+				backgroundColor: [],
+				borderColor: [],
+				borderWidth: 1,
+                borderRadius: 0,
+				spacing: 0,
+				cutout: 120,
+			},
+		],
+	});
+
+	useEffect(() => {
+		if(data?.categoryStatistics) {
+			const categories = data.categoryStatistics.map((stat) => stat.category);
+			const totalAmounts = data.categoryStatistics.map((stat) => stat.totalAmount);
+
+			const backgroundColors = [];
+			const borderColors = [];
+
+			categories.forEach((category) => {
+				if (category === "saving") {
+					backgroundColors.push("rgba(75, 192, 192)");
+					borderColors.push("rgba(75, 192, 192)");
+				} else if (category === "expense") {
+					backgroundColors.push("rgba(255, 99, 132)");
+					borderColors.push("rgba(255, 99, 132)");
+				} else if (category === "investment") {
+					backgroundColors.push("rgba(54, 162, 235)");
+					borderColors.push("rgba(54, 162, 235)");
+				}
+			});
+
+			setChartData((prev) => ({
+				labels: categories,
+				datasets: [
+					{
+						...prev.datasets[0],
+						data: totalAmounts,
+						backgroundColor: backgroundColors,
+						borderColor: borderColors,
+					},
+				],
+			}));
+		}
+	}, [data])
 
 	const handleLogout = async () => {
 		// console.log("Logging out...");
 		try {
 			await logout()
+			client.resetStore()  //clearing cache from the docs
 		} catch (error) {
 			console.error("Error Logging out: ", error);
 			toast.error(error.message)
