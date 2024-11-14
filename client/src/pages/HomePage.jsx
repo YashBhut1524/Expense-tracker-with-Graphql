@@ -23,8 +23,8 @@ const HomePage = () => {
 	// 		{
 	// 			label: "%",
 	// 			data: [6300, 8545, 5553],
-	// 			backgroundColor: ["rgba(75, 192, 192)", "rgba(255, 99, 132)", "rgba(54, 162, 235)"],
-	// 			borderColor: ["rgba(75, 192, 192)", "rgba(255, 99, 132)", "rgba(54, 162, 235, 1)"],
+	// 			backgroundColor: ["rgb(75, 192, 192)", "rgb(255, 99, 132)", "rgb(54, 162, 235)"],
+	// 			borderColor: ["rgb(75, 192, 192)", "rgb(255, 99, 132)", "rgba(54, 162, 235, 1)"],
 	// 			borderWidth: 0,
     //             borderRadius: 0,
 	// 			spacing: 0,
@@ -38,7 +38,7 @@ const HomePage = () => {
 	})
 
 	const {data} = useQuery(GET_TRANSACTIONS_STATISTICS)
-	console.log("category Statistics: ", data);
+	// console.log("category Statistics: ", data);
 	const {data: authUserData} = useQuery(GET_AUTHENTICATED_USER)
 
 	const [chartData, setChartData] = useState({
@@ -67,14 +67,14 @@ const HomePage = () => {
 
 			categories.forEach((category) => {
 				if (category === "saving") {
-					backgroundColors.push("rgba(75, 192, 192)");
-					borderColors.push("rgba(75, 192, 192)");
+					backgroundColors.push("rgb(75, 192, 192)");
+					borderColors.push("rgb(75, 192, 192)");
 				} else if (category === "expense") {
-					backgroundColors.push("rgba(255, 99, 132)");
-					borderColors.push("rgba(255, 99, 132)");
+					backgroundColors.push("rgb(255, 99, 132)");
+					borderColors.push("rgb(255, 99, 132)");
 				} else if (category === "investment") {
-					backgroundColors.push("rgba(54, 162, 235)");
-					borderColors.push("rgba(54, 162, 235)");
+					backgroundColors.push("rgb(54, 162, 235)");
+					borderColors.push("rgb(54, 162, 235)");
 				}
 			});
 
@@ -122,10 +122,12 @@ const HomePage = () => {
 					{loading && <div className='w-6 h-6 border-t-2 border-b-2 mx-2 rounded-full animate-spin'></div>}
 				</div>
 				<div className='flex flex-wrap w-full justify-center items-center gap-6'>
-					<div className='h-[330px] w-[330px] md:h-[360px] md:w-[360px]  '>
-						<Doughnut data={chartData} />
-					</div>
-
+				{ data?.categoryStatistics.length > 0 && (
+						<div className='h-[330px] w-[330px] md:h-[360px] md:w-[360px]  '>
+							<Doughnut data={chartData} />
+						</div>
+					)
+				}
 					<TransactionForm />
 				</div>
 				<Cards />
