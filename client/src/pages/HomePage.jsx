@@ -8,6 +8,7 @@ import TransactionForm from "../components/TransactionForm.jsx";
 import { useMutation, useQuery } from "@apollo/client";
 import { LOGOUT } from "../GraphQl/mutations/user.mutation.js";
 import { GET_TRANSACTIONS_STATISTICS } from "../GraphQl/queries/transaction.query.js";
+import { GET_AUTHENTICATED_USER } from "../GraphQl/queries/user.query.js";
 import { useEffect, useState } from "react";
 
 
@@ -38,6 +39,7 @@ const HomePage = () => {
 
 	const {data} = useQuery(GET_TRANSACTIONS_STATISTICS)
 	console.log("category Statistics: ", data);
+	const {data: authUserData} = useQuery(GET_AUTHENTICATED_USER)
 
 	const [chartData, setChartData] = useState({
 		labels: [],
@@ -111,7 +113,7 @@ const HomePage = () => {
 						Spend wisely, track wisely
 					</p>
 					<img
-						src={"https://tecdn.b-cdn.net/img/new/avatars/2.webp"}
+						src={authUserData?.authUser.profilePicture}
 						className='w-11 h-11 rounded-full border cursor-pointer'
 						alt='Avatar'
 					/>
